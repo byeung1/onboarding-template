@@ -82,6 +82,8 @@ inline void apply_stencil(const Grid& old_grid, Grid& new_grid) {
   }
 
   //apply the heat-spreading formula
+  //dividng the work across all cpu cores
+  #pragma omp parallel for
   for(std::size_t i = 1; i < rows - 1; i++) {
 
     std::size_t rowIdx = i * stride;
