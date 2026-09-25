@@ -88,8 +88,8 @@ inline void apply_stencil(const Grid& old_grid, Grid& new_grid) {
     for(std::size_t j = 1; j < cols - 1; j ++) {
 
       std::size_t center = rowIdx + j;
-      std::size_t up = center - cols;
-      std::size_t down = center + cols;
+      std::size_t up = center - stride;
+      std::size_t down = center + stride;
       std::size_t left = center - 1;
       std::size_t right = center + 1;
 
