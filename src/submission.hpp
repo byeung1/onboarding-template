@@ -86,6 +86,9 @@ inline void apply_stencil(const Grid& old_grid, Grid& new_grid) {
 
     std::size_t rowIdx = i * stride;
 
+    //implement SIMD (simple instruction, multiple data)
+    //make the cpu calculate multiple columns at once
+    #pragma omp simd
     for(std::size_t j = 1; j < cols - 1; j ++) {
 
       std::size_t center = rowIdx + j;
