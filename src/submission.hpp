@@ -64,20 +64,21 @@ inline void apply_stencil(const Grid& old_grid, Grid& new_grid) {
   std::size_t cols = old_grid.cols();
   std::size_t stride = old_grid.stride();
 
-  const auto& old_tiles = old_grid.raw_data();
-  auto& new_tiles = new_grid.raw_data();
+  //tell compiler that the two do not overlap
+  const double* __restrict old_ptr = old_grid.raw_data().data();
+  double* __restrict new_ptr = new_grid.raw_data().data();
 
   //copy the top and bottom edges
   for(std::size_t j = 0; j < cols; j++) {
-    new_tiles[j] = old_tiles[j];
-    new_tiles[(rows - 1) * stride + j] = old_tiles[(rows - 1) * stride + j];
+    new_ptr[j] = old_ptr[j];
+    new_ptr[(rows - 1) * stride + j] = old_ptr[(rows - 1) * stride + j];
   }
 
   //copy left and right edges
   //skip corners bcs alr did them
   for(std::size_t i = 1; i < rows - 1; i++) {
-    new_tiles[i * stride] = old_tiles[i * stride];
-    new_tiles[i * stride + cols - 1] = old_tiles[i * stride + cols - 1];
+    new_ptr[i * stride] = old_ptr[i * stride];
+    new_ptr[i * stride + cols - 1] = old_ptr[i * stride + cols - 1];
   }
 
   //apply the heat-spreading formula
@@ -93,7 +94,7 @@ inline void apply_stencil(const Grid& old_grid, Grid& new_grid) {
       std::size_t left = center - 1;
       std::size_t right = center + 1;
 
-      new_tiles[center] = 0.5 * old_tiles[center] + 0.125 * (old_tiles[up] + old_tiles[down] + old_tiles[left] + old_tiles[right]);
+      new_ptr[center] = 0.5 * old_ptr[center] + 0.125 * (old_ptr[up] + old_ptr[down] + old_ptr[left] + old_ptr[right]);
     }
   }
 };
